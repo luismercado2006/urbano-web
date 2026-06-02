@@ -1,0 +1,334 @@
+/* ---------- ESTILOS GENERALES ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth; /* 🔹 Scroll suave restaurado */
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9fbff;
+  color: #333;
+}
+
+/* ---------- LOGO ---------- */
+.Img_logo {
+  height: 146px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+/* ---------- HEADER (NAVBAR) ---------- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #004aad;
+  padding: 8px 50px;
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 25px;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.97rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+header nav a:hover {
+  color: #a3d3ff;
+  transform: translateY(-2px);
+}
+
+/* ---------- SECCIÓN HERO ---------- */
+.hero-Home {
+  position: relative;
+  background-image: url('../img/backgroud.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: -70px; /* 🔹 Corrige el desplazamiento por el header */
+  overflow: hidden;
+}
+
+.hero-Home::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(13,71,161,0.3));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-Home h1, .hero-Home p {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-Home h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.hero-Home p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin-bottom: 35px;
+  line-height: 1.6;
+}
+
+/* ---------- BOTÓN "COMENZAR" ---------- */
+.btn-comenzar {
+  display: inline-block;
+  padding: 14px 38px;
+  background: linear-gradient(90deg, #004aad, #007bff);
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 30px;
+  box-shadow: 0 0 10px rgba(0, 74, 173, 0.6);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-comenzar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+  transition: all 0.8s ease;
+}
+
+.btn-comenzar:hover::before {
+  left: 100%;
+}
+
+.btn-comenzar:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 123, 255, 0.8);
+  animation: pulseBtn 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseBtn {
+  0% { box-shadow: 0 0 12px rgba(0,123,255,0.5); }
+  50% { box-shadow: 0 0 25px rgba(0,123,255,0.9); }
+  100% { box-shadow: 0 0 12px rgba(0,123,255,0.5); }
+}
+
+/* ---------- SECCIÓN FEATURES ---------- */
+.features {
+  background: linear-gradient(180deg, #e8f1ff, #fff);
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 2.3em;
+  margin-bottom: 40px;
+  color: #004aad;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 25px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card i {
+  font-size: 40px;
+  color: #004aad;
+  margin-bottom: 15px;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 10.01%);
+  background-size: 5% 5%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 0.2;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.2); opacity: 0.35; }
+  100% { transform: scale(1); opacity: 0.2; }
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  background-color: #004aad;
+  color: white;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.card:hover i {
+  color: #a3d3ff;
+}
+
+/* ---------- ABOUT ---------- */
+.about {
+  padding: 80px 20px;
+  text-align: center;
+  background-color: #f0f7ff;
+}
+
+.about h2 {
+  font-size: 2.3em;
+  color: #004aad;
+  margin-bottom: 20px;
+}
+
+.about p {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+  color: #333;
+}
+
+/* ---------- TEAM ---------- */
+.team {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.member {
+  width: 200px;
+  height: 250px;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+}
+
+.member .front,
+.member .back {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.7s ease;
+}
+
+.member .front {
+  background-color: #004aad;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.member .back {
+  transform: rotateY(180deg);
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.member:hover .front {
+  transform: rotateY(180deg);
+}
+
+.member:hover .back {
+  transform: rotateY(0deg);
+}
+
+.member img {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+  background-color: #004aad;
+  color: white;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+footer a {
+  color: #a3d3ff;
+  text-decoration: none;
+}
+
+header nav a.active {
+  background-color: #a3d3ff;
+  color: #003b86;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* Marcar "Bienvenido" si no hay hash en la URL */
+body:not(:has(:target)) header nav a[href="#hero-home"] {
+    background-color: #a3d3ff;
+    color: #003b86;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+body:has(#hero-home:target) header nav a[href="#hero-home"],
+body:has(#features:target) header nav a[href="#features"],
+body:has(#quienes-somos:target) header nav a[href="#quienes-somos"],
+body:has(#contacto:target) header nav a[href="#contacto"] {
+    background-color: #a3d3ff;
+    color: #003b86;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+

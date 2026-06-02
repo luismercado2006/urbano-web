@@ -1,0 +1,398 @@
+/*=============== Navbar ===============*/
+.navbar {
+    background-color: #003366;
+}
+
+.nav-pills .nav-link {
+    color: white;
+    padding: 1px 15px; /* Espaciado interno */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.nav-item {
+    margin: 5px; /* Espaciado entre elementos */
+}
+
+/*============= Formato de texto ================*/
+.nav-link {
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+/*=============== Tipo de letra y tamaño ==============*/
+h1 {
+    font-size: 3.5rem;
+    font-family: "Rubik Doodle Shadow", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h2 {
+    font-size: 2rem;
+    font-family: "EB Garamond", serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+/*================ Sección Hero =================*/
+.hero {
+    background-image: url('../img/Fondo.avif');
+    background-size: cover;
+    background-position: center;
+    min-height: 450px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.Inicio-P {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.Img_logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/*========= Tarjetas ========*/
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra inicial */
+}
+
+.card:hover {
+    transform: translateX(10px) translateY(-5px); /* Desplaza y eleva la tarjeta */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Aumenta la sombra */
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.card-text {
+    color: #555;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+/*=============== Perfil ==============*/
+.perfil-img {
+    margin-top: -27px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+.perfil-img img {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+/*=============== Formularios ==============*/
+/* Fondo general */
+.background-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    min-height: calc(100vh - 150px); /* Altura ajustada para mantener consistencia */
+}
+
+/* Contenedor de formularios */
+.centered-form {
+    position: relative;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Formulario específico: Registrar Venta */
+#REV form {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para etiquetas */
+#REV .form-label,
+.centered-form .form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Espaciado entre campos */
+.mb-3, .row > .col-md-6 {
+    margin-bottom: 15px;
+}
+
+/* Botón de envío */
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+
+.chart-container {
+    width: 50%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+#TR {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#IN {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Espacio entre los botones */
+}
+
+/* Estilo básico de tabla */
+table.dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1c1f26;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+}
+
+/* Encabezado de la tabla */
+table.dataTable thead th {
+    background-color: #232631;
+    color: #ffffff;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+/* Filas */
+table.dataTable tbody tr {
+    border-bottom: 1px solid #2c2f38;
+}
+
+table.dataTable tbody td {
+    padding: 10px;
+}
+
+/* Hover */
+table.dataTable tbody tr:hover {
+    background-color: #2a2e39;
+}
+
+/* Controles de paginación */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #ffffff !important;
+    background-color: transparent;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin: 2px;
+    font-size: 13px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #444;
+}
+
+/* Controles de filtro y longitud */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_info {
+    color: #bbbbbb;
+    font-size: 13px;
+}
+
+/* Inputs */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    background-color: #2c2f38;
+    border: 1px solid #444;
+    color: #f0f0f0;
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+table.dataTable {
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+/* Controla el ancho relativo de cada columna */
+table.dataTable th:nth-child(1), /* Nombre */
+table.dataTable td:nth-child(1) {
+  width: 12%;
+}
+
+table.dataTable th:nth-child(2), /* Apellido */
+table.dataTable td:nth-child(2) {
+  width: 12%;
+}
+
+table.dataTable th:nth-child(3), /* Email */
+table.dataTable td:nth-child(3) {
+  width: 26%;
+  word-break: break-word; /* Evita que se desborde el correo */
+}
+
+table.dataTable th:nth-child(4), /* Teléfono */
+table.dataTable td:nth-child(4) {
+  width: 15%;
+}
+
+table.dataTable th:nth-child(5), /* Dirección */
+table.dataTable td:nth-child(5) {
+  width: 35%;
+  word-break: break-word;
+}
+
+
+/* Ajuste al contenedor general si usas DataTables */
+.dataTables_wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Contenedor general */
+.venta-container {
+  background-color: #f7f8fa;
+  padding: 40px 20px;
+  border-radius: 16px;
+}
+
+/* Formulario */
+.venta-form-wrapper {
+  max-width: 960px;
+  margin: auto;
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* Títulos */
+.venta-titulo {
+  text-align: center;
+  font-weight: bold;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.venta-subtitulo {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* Tabla */
+.venta-tabla th, .venta-tabla td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.venta-container {
+  max-width: 1000px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+#ventaTable th,
+#ventaTable td {
+  vertical-align: middle;
+}
+
+#ventaTable input,
+#ventaTable select {
+  min-width: 90px;
+}
+
+.card .text-primary {
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+
+button.btn i {
+  margin-right: 4px;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background-color: #f8f9fa;
+}
+
+.select2-results__options {
+    max-height: 200px;
+    overflow-y: auto;
+}

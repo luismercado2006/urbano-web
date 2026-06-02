@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Urban Flair</title>
+    <link rel="stylesheet" th:href="@{/css/styleUsuario.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div class="user-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo Urban Flair">
+        </div>
+
+        <nav class="menu">
+            <a th:href="@{/usuario}"><i class="bi bi-house"></i> Inicio</a>
+            <a th:href="@{/usuario/registrar-proveedor}"><i class="bi bi-truck"></i> Registrar Proveedor</a>
+            <a th:href="@{/usuario/registrar-producto}"><i class="bi bi-box"></i> Registrar Producto</a>
+            <a th:href="@{/usuario/registrar-venta}"><i class="bi bi-cash-stack"></i> Registrar Venta</a>
+            <a th:href="@{/usuario/mis-ventas}"><i class="bi bi-receipt"></i> Mis Ventas</a>
+            <a th:href="@{/usuario/inventario}" class="active"><i class="bi bi-archive"></i> Inventario</a>
+            <a th:href="@{/usuario/perfil}"><i class="bi bi-person-circle"></i> Perfil</a>
+        </nav>
+
+        <a href="#" class="logout" onclick="confirmLogout(event)">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+
+        <script>
+            function confirmLogout(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: '¿Cerrar sesión?',
+                    text: "Tu sesión actual se cerrará.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, salir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/logout';
+                    }
+                });
+            }
+        </script>
+    </aside>
+
+    <!-- ESTILOS -->
+    <style>
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            background-color: #f4f7fc;
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 2.5rem 3rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            max-width: 1400px; /* más ancho para la tabla */
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0a3d91;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        /* ======== BUSCADOR ======== */
+        .top-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px 10px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            flex-grow: 1;
+            font-size: 1rem;
+            background-color: transparent;
+        }
+
+        .search-box i {
+            color: #777;
+        }
+
+        /* ======== TABLA ======== */
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            table-layout: auto;
+        }
+
+        thead {
+            background-color: #0a3d91;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #e1e5eb;
+            font-size: 0.95rem;
+        }
+
+        tbody tr:hover {
+            background-color: #f4f7fc;
+            transition: 0.3s ease;
+        }
+
+        tbody td {
+            color: #333;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 1.5rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* ======== PAGINACIÓN ======== */
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #555;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .pagination-controls button {
+            background-color: #fff;
+            border: 1px solid #0a3d91;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            color: #0a3d91;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #E3F2FD;
+        }
+
+        .pagination-controls button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .page-info {
+            font-weight: 600;
+        }
+
+        /* ======== RESPONSIVE ======== */
+        @media (max-width: 900px) {
+            .form-container {
+                padding: 1.5rem 1.2rem;
+            }
+
+            th, td {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+        <div class="form-container">
+            <div class="form-header">
+                <h2><i class="bi bi-archive"></i> Inventario de Productos</h2>
+            </div>
+
+            <!-- BUSCADOR -->
+            <div class="top-controls">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por código, descripción, color o marca..." onkeyup="filterTable()">
+                </div>
+            </div>
+
+            <!-- TABLA -->
+            <div class="table-container">
+                <table id="inventory-table">
+                    <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Color</th>
+                        <th>Marca</th>
+                        <th>Talla</th>
+                        <th>Stock</th>
+                        <th>Valor</th>
+                        <th>Proveedor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="productoVista : ${productos}">
+                        <td th:text="${productoVista.producto.codigoP}">001</td>
+                        <td th:text="${productoVista.producto.categoria}">Categoría</td>
+                        <td th:text="${productoVista.producto.descripcion}">Descripción</td>
+                        <td th:text="${productoVista.producto.color}">Color</td>
+                        <td th:text="${productoVista.producto.marca}">Marca</td>
+                        <td th:text="${productoVista.producto.talla}">Talla</td>
+                        <td th:text="${productoVista.producto.stock}">0</td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(productoVista.producto.valorProdu, 1, 2)}">$0.00</td>
+                        <td th:text="${productoVista.nombreProveedor}">Proveedor</td>
+                    </tr>
+
+                    <tr th:if="${productos == null or productos.empty}">
+                        <td colspan="9" class="no-data">No hay productos registrados</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINACIÓN -->
+            <div class="pagination-controls">
+                <button id="prev-btn" onclick="prevPage()" disabled><i class="bi bi-chevron-left"></i> Anterior</button>
+                <span class="page-info">Página <span id="current-page">1</span> de <span id="total-pages">1</span></span>
+                <button id="next-btn" onclick="nextPage()" disabled>Siguiente <i class="bi bi-chevron-right"></i></button>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- SCRIPT BUSCADOR + PAGINACIÓN -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initializePaginator();
+    });
+
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    let allRows;
+    let filteredRows;
+
+    function initializePaginator() {
+        const table = document.getElementById('inventory-table');
+        allRows = Array.from(table.tBodies[0].querySelectorAll('tr')).filter(row => !row.classList.contains('no-data'));
+        filterTable();
+    }
+
+function normalizeText(text) {
+    return text
+        .normalize("NFD") // Descompone caracteres con acentos
+        .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos
+        .toUpperCase();
+}
+
+function filterTable() {
+    const input = document.getElementById('search-input');
+    const filter = normalizeText(input.value);
+
+    filteredRows = allRows.filter(row => {
+        const colsToSearch = [0, 1, 2, 3, 4]; // Código, Categoría, Descripción, Color, Marca
+        let rowText = '';
+        colsToSearch.forEach(colIndex => {
+            const cell = row.cells[colIndex];
+            if (cell) rowText += normalizeText(cell.textContent) + ' ';
+        });
+        return rowText.includes(filter);
+    });
+
+    currentPage = 1;
+    renderPage();
+}
+
+    function renderPage() {
+        const tableBody = document.getElementById('inventory-table').tBodies[0];
+        tableBody.innerHTML = '';
+
+        const totalItems = filteredRows.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+        document.getElementById('total-pages').textContent = totalPages > 0 ? totalPages : 1;
+        document.getElementById('current-page').textContent = totalPages > 0 ? currentPage : 0;
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const rowsToShow = filteredRows.slice(start, end);
+
+        if (totalItems === 0) {
+            const newNoDataRow = document.createElement('tr');
+            newNoDataRow.innerHTML = '<td colspan="9" class="no-data">No hay productos que coincidan con la búsqueda.</td>';
+            newNoDataRow.classList.add('no-data');
+            tableBody.appendChild(newNoDataRow);
+        } else {
+            rowsToShow.forEach(row => tableBody.appendChild(row));
+        }
+
+        document.getElementById('prev-btn').disabled = currentPage <= 1;
+        document.getElementById('next-btn').disabled = currentPage >= totalPages;
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage();
+        }
+    }
+</script>
+</body>
+</html>
+
+

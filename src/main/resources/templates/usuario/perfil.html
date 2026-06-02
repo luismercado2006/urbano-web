@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Perfil</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" th:href="@{/css/styleUsuario.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+
+        /* ====== CONTENEDOR PRINCIPAL ====== */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* ====== TARJETA DEL PERFIL ====== */
+        .profile-card {
+            width: 100%;
+            max-width: 520px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ====== AVATAR ====== */
+        .profile-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a3d91, #4c82e6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            color: white;
+            font-size: 48px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ====== NOMBRE COMPLETO ====== */
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0a3d91;
+            margin-bottom: 0.25rem;
+        }
+
+        /* ====== CORREO ====== */
+        .profile-email {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ====== SECCIÓN DE INFO ====== */
+        .profile-info {
+            text-align: left;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .info-item label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0a3d91;
+        }
+
+        .info-box {
+            background: #f0f3f9;
+            padding: 0.8rem 1.1rem;
+            border-radius: 12px;
+            border: 1px solid #dbe1ea;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* ====== ICONOS DE INFO ====== */
+        .info-icon {
+            margin-right: 8px;
+            color: #0a3d91;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="user-container">
+
+    <!-- ======== SIDEBAR ======== -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo Urban Flair">
+        </div>
+
+        <nav class="menu">
+            <a th:href="@{/usuario}"><i class="bi bi-house"></i> Inicio</a>
+            <a th:href="@{/usuario/registrar-proveedor}"><i class="bi bi-truck"></i> Registrar Proveedor</a>
+            <a th:href="@{/usuario/registrar-producto}"><i class="bi bi-box"></i> Registrar Producto</a>
+            <a th:href="@{/usuario/registrar-venta}"><i class="bi bi-cash-stack"></i> Registrar Venta</a>
+            <a th:href="@{/usuario/mis-ventas}"><i class="bi bi-receipt"></i> Mis Ventas</a>
+            <a th:href="@{/usuario/inventario}"><i class="bi bi-archive"></i> Inventario</a>
+            <a th:href="@{/usuario/perfil}" class="active"><i class="bi bi-person-circle"></i> Perfil</a>
+        </nav>
+
+        <a href="#" class="logout" onclick="confirmLogout(event)">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+
+        <script>
+            function confirmLogout(event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: '¿Cerrar sesión?',
+                    text: "Tu sesión actual se cerrará.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, salir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/logout';
+                    }
+                });
+            }
+        </script>
+    </aside>
+
+    <!-- ======== CONTENIDO PRINCIPAL ======== -->
+    <main class="main-content">
+
+        <div class="profile-card">
+
+            <!-- AVATAR -->
+            <div class="profile-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <!-- NOMBRE -->
+            <div class="profile-name" th:text="${usuario.nombre + ' ' + usuario.apellido}">
+                Nombre Apellido
+            </div>
+
+            <!-- EMAIL -->
+            <div class="profile-email">
+                <i class="bi bi-envelope"></i>
+                <span th:text="${usuario.correo}">correo@ejemplo.com</span>
+            </div>
+
+            <!-- INFORMACIÓN DETALLADA -->
+            <div class="profile-info">
+
+                <div class="info-item">
+                    <label><i class="bi bi-person info-icon"></i> Nombre</label>
+                    <div class="info-box" th:text="${usuario.nombre}">Nombre</div>
+                </div>
+
+                <div class="info-item">
+                    <label><i class="bi bi-person-badge info-icon"></i> Apellido</label>
+                    <div class="info-box" th:text="${usuario.apellido}">Apellido</div>
+                </div>
+
+                <div class="info-item">
+                    <label><i class="bi bi-envelope info-icon"></i> Correo</label>
+                    <div class="info-box" th:text="${usuario.correo}">correo@ejemplo.com</div>
+                </div>
+
+                <div class="info-item">
+                    <label><i class="bi bi-shield-lock info-icon"></i> Rol</label>
+                    <div class="info-box">
+                        <span th:each="rol : ${usuario.roles}" th:text="${rol.nombre} + ' '"></span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

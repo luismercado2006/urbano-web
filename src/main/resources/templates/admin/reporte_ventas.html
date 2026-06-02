@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* <--- eliminar */
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        /* ================= NAVBAR ================= */
+        .admin-header {
+            background-color: #0d47a1;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            height: 90px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .admin-header .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .admin-header .logo img {
+            height: 120px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .admin-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .admin-header .actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-regresar, .btn-logout {
+            white-space: nowrap;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 2px solid #1565c0;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-regresar {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: #fff !important;
+        }
+        .btn-regresar:hover {
+            background: #ffd54f;
+            color: #333 !important;
+            border-color: #ffd54f;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: #fff !important;
+        }
+        .btn-logout:hover {
+            background: #ef5350;
+            color: #fff !important;
+            border-color: #ef5350;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+        }
+
+        /* ================= Diseño de confirmacion de cerrar sesion ================= */
+        .swal2-popup {
+            border-radius: 20px !important;
+            padding: 25px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.20) !important;
+        }
+
+        .swal2-title {
+            font-size: 1.6rem !important;
+            font-weight: 700 !important;
+            color: #0d47a1 !important;
+        }
+
+        .swal2-html-container {
+            font-size: 1.1rem !important;
+            color: #333 !important;
+        }
+
+        /* Botón CONFIRMAR (Sí, salir) */
+        .swal2-confirm {
+            background: linear-gradient(135deg, #0d47a1, #1565c0) !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #1565c0 !important;
+            box-shadow: 0 0 0 2px rgba(21,101,192,0.3) !important;
+        }
+
+        /* Hover CONFIRMAR */
+        .swal2-confirm:hover {
+            background: #ffd54f !important;
+            color: #333 !important;
+            border-color: #ffd54f !important;
+            box-shadow: 0 0 0 2px rgba(255,213,79,0.3) !important;
+        }
+
+        /* Botón CANCELAR */
+        .swal2-cancel {
+            background: #ef5350 !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #ef5350 !important;
+            box-shadow: 0 0 0 2px rgba(239,83,80,0.3) !important;
+        }
+
+        /* Hover CANCELAR */
+        .swal2-cancel:hover {
+            background: #e53935 !important;
+            box-shadow: 0 0 0 2px rgba(229,57,53,0.3) !important;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-container {
+            padding: 120px 2rem 2rem 2rem; /* espacio por navbar fijo */
+        }
+
+        .dashboard-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            color: #1976D2;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #E0E0E0;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-left {
+            flex-grow: 1;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background-color: #E3F2FD;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #1976D2;
+        }
+
+        .metric-card h3 {
+            font-size: 1.1rem;
+            color: #1976D2;
+            margin-bottom: 5px;
+        }
+
+        .metric-card p {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .chart-section {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-section h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            width: 100%;
+        }
+
+        .year-selector-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+        .year-selector-form select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #f9f9f9;
+        }
+        .year-selector-form button {
+            padding: 8px 15px;
+            background-color: #1976D2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .year-selector-form button:hover {
+            background-color: #0D47A1;
+        }
+    </style>
+</head>
+<body>
+<div class="user-container">
+
+    <header class="admin-header">
+        <div class="logo-title">
+            <div class="logo">
+                <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo">
+            </div>
+            <h1><i class="bi bi-graph-up-arrow"></i> Dashboard Financiero Anual</h1>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/Admin}" class="btn-regresar">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
+
+            <a href="#" class="btn-logout" onclick="confirmLogout(event)">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="dashboard-container">
+            <header class="header">
+                <div class="header-left">
+                    <h2><i class="bi bi-graph-up-arrow"></i> Dashboard Financiero Anual</h2>
+                    <iframe title="UrbanDefinitivo" width="1000" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiMTRmNWRjMTItZTZkMS00ZjIzLTljNzgtNTVlY2EyNzExZTk5IiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+</body>
+</html>

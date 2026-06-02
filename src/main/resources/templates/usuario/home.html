@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Urban Flair</title>
+    <link rel="stylesheet" th:href="@{/css/styleUsuario.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div class="user-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo Urban Flair">
+        </div>
+
+        <nav class="menu">
+            <a th:href="@{/usuario}"  class="active" ><i class="bi bi-house"></i> Inicio</a>
+            <a th:href="@{/usuario/registrar-proveedor}"><i class="bi bi-truck"></i> Registrar Proveedor</a>
+            <a th:href="@{/usuario/registrar-producto}"><i class="bi bi-box"></i> Registrar Producto</a>
+            <a th:href="@{/usuario/registrar-venta}"><i class="bi bi-cash-stack"></i> Registrar Venta</a>
+            <a th:href="@{/usuario/mis-ventas}"><i class="bi bi-receipt"></i> Mis Ventas</a>
+            <a th:href="@{/usuario/inventario}"><i class="bi bi-archive"></i> Inventario</a>
+            <a th:href="@{/usuario/perfil}"><i class="bi bi-person-circle"></i> Perfil</a>
+        </nav>
+
+        <a href="#" class="logout" onclick="confirmLogout(event)">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+
+        <script>
+            function confirmLogout(event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: '¿Cerrar sesión?',
+                    text: "Tu sesión actual se cerrará.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, salir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/logout';
+                    }
+                });
+            }
+        </script>
+    </aside>
+
+    <main class="main-content" style="background-image: url('/img/foto1.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <header class="user-header">
+            <h1>
+                Bienvenido,
+                <span th:text="${nombreUsuario}">usuario</span>👋
+            </h1>
+        </header>
+
+        <section class="dashboard-summary">
+            <h2>Resumen General</h2>
+            <p class="description">Consulta tus datos e indicadores clave de un vistazo.</p>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <i class="bi bi-box-seam"></i>
+                    <div class="stat-info">
+                        <h3>Productos</h3>
+                        <p th:text="${#numbers.formatInteger(productos, 0, 'POINT') + ' registrados'}">0 registrados</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-truck"></i>
+                    <div class="stat-info">
+                        <h3>Proveedores</h3>
+                        <p th:text="${#numbers.formatInteger(proveedores, 0, 'POINT') + ' activos'}">0 activos</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-cart-check"></i>
+                    <div class="stat-info">
+                        <h3>Ventas del mes</h3>
+                        <p th:text="${'$' + #numbers.formatDecimal(ventasMes, 0, 'POINT', 2, 'COMMA')}">$0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-archive"></i>
+                    <div class="stat-info">
+                        <h3>Stock disponible</h3>
+                        <p th:text="${#numbers.formatInteger(stockDisponible, 0, 'POINT') + ' unidades'}">0 unidades</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+</div>
+</body>
+</html>

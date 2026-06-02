@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/Logo_Urban.png}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #001f3f, #003875);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Inter", sans-serif;
+            color: #fff;
+        }
+
+        .login-box {
+            width: 380px;
+            padding: 32px 38px;
+            border-radius: 18px;
+            background: #002a57; /* Sólido sin glass */
+            border: 1px solid #004a86;
+        }
+
+        .logo {
+            text-align: center;
+        }
+
+        .logo img {
+            width: 205px;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-bottom: 22px;
+            font-size: 1.6rem;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #003567;
+            padding: 11px;
+            border-radius: 12px;
+            border: 1px solid #00559b;
+            /* ********** DETALLE AÑADIDO: SOMBRA SUAVE AL INPUT ********** */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.1);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Efecto al enfocar: resalte del borde y brillo */
+        .input-wrapper:focus-within {
+             border: 1px solid #8ecaff;
+             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5),
+                         inset -2px -2px 5px rgba(255, 255, 255, 0.15),
+                         0 0 8px rgba(142, 202, 255, 0.6); /* Brillo azul */
+        }
+
+        .input-wrapper i {
+            font-size: 1.20rem;
+            margin-right: 10px;
+            color: #8ecaff;
+        }
+
+        .input-wrapper input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            width: 100%;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #c7dcf8;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: #0a56c9;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            color: white;
+            transition: 0.35s ease, box-shadow 0.35s ease; /* Transición más completa */
+            font-weight: 600;
+            /* ********** DETALLE AÑADIDO: SOMBRA INICIAL DEL BOTÓN ********** */
+            box-shadow: 0 4px 15px rgba(10, 86, 201, 0.4);
+        }
+
+        .btn-login:hover {
+            background: #2e7bff;
+            transform: translateY(-2px);
+            /* ********** DETALLE AÑADIDO: BRILLO AL HACER HOVER ********** */
+            box-shadow: 0 6px 20px rgba(46, 123, 255, 0.6), 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ********** DETALLE AÑADIDO: ANIMACIÓN AL HACER CLICK ********** */
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6); /* Efecto de hundimiento */
+        }
+
+        .messages {
+            background: rgba(255, 70, 70, 0.25);
+            border: 1px solid rgba(255, 120, 120, 0.35);
+            color: #ffd2d2;
+            padding: 8px;
+            margin-bottom: 14px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .links a {
+            color: #bfe0ff;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: 0.23s ease;
+        }
+
+        .links a:hover {
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255,255,255,0.35);
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 40px #003567 inset !important;
+            -webkit-text-fill-color: #fff !important;
+        }
+
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 40px #003567 inset !important;
+            -webkit-text-fill-color: #fff !important;
+        }
+        .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 14px;
+}
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: #1e4070;
+}
+.divider-text {
+    font-size: 0.8rem;
+    color: #6888bb;
+    white-space: nowrap;
+}
+.btn-google {
+    width: 100%;
+    background: #fff;
+    color: #1a1a1a;
+    border: none;
+    padding: 11px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.btn-google:hover {
+    background: #f1f1f1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="logo">
+        <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Urban Flair Logo">
+    </div>
+
+    <h2>Iniciar Sesión</h2>
+
+    <div th:if="${param.error}" class="messages">
+        Correo o contraseña incorrectos
+    </div>
+
+    <form th:action="@{/login}" method="post">
+
+        <div class="input-group">
+            <label>Correo</label>
+            <div class="input-wrapper">
+                <i class="ri-mail-line"></i>
+                <input type="email" name="username" placeholder="correo@ejemplo.com" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Contraseña</label>
+            <div class="input-wrapper">
+                <i class="ri-lock-2-line"></i>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+        </div>
+
+        <button class="btn-login">Entrar</button>
+    </form>
+    <!-- Divisor -->
+    <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">o continúa con</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- Botón Google -->
+    <a th:href="@{/oauth2/authorization/google}" style="text-decoration:none;">
+        <button type="button" class="btn-google">
+            <svg style="width:20px;height:20px;" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Iniciar sesión con Google
+        </button>
+    </a>
+
+    <div class="links">
+        <p>¿No tienes cuenta?
+            <a th:href="@{/registro}">Crear cuenta</a>
+        </p>
+        <a th:href="@{/}">Volver al inicio</a>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Urban Flair Admin</title>
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .form-container {
+            background: #fff;
+            padding: 2.5rem 3rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin: 2rem auto; /* Centrado */
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0a3d91;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        /* Estilos de campo simplificados */
+        .form-label { font-weight: 600; color: #555; margin-bottom: 0.5rem; display: block; }
+        .form-control, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0a3d91;
+            box-shadow: 0 0 0 0.25rem rgba(10, 61, 145, 0.25);
+            outline: none;
+        }
+        .row { display: flex; flex-wrap: wrap; gap: 1rem 0; }
+        .col-md-4, .col-md-6 { flex: 0 0 auto; padding-right: 0.75rem; padding-left: 0.75rem; }
+        .col-md-6 { width: 50%; }
+        .col-md-4 { width: 33.3333%; }
+        .mb-3 { margin-bottom: 1rem; }
+        .form-actions .btn-primary { border: none; }
+        .form-actions .btn-secondary { text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="user-container">
+
+    <main class="main-content">
+        <div class="form-container" style="max-width: 800px;">
+            <div class="form-header">
+                <h2><i class="bi bi-pencil-square"></i> Editar Producto</h2>
+            </div>
+
+            <form th:action="@{/admin/inventario/guardar-edicion}" th:object="${producto}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="codigoP" class="form-label">Código</label>
+                        <input type="text" id="codigoP" th:field="*{codigoP}" class="form-control" required readonly />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <select id="categoria" th:field="*{categoria}" class="form-select" required>
+                            <option value="">Seleccione Categoría</option>
+                            <option value="Suéter">Suéter</option>
+                            <option value="Pantalón">Pantalón</option>
+                            <option value="Camisa">Camisa</option>
+                            <option value="Buso">Buso</option>
+                            <option value="Camiseta">Camiseta</option>
+                            <option value="Chaqueta">Chaqueta</option>
+                            <option value="Jeans">Jeans</option>
+                            <option value="Sudadera">Sudadera</option>
+                            <option value="Short">Short</option>
+                            <option value="Falda">Falda</option>
+                            <option value="Vestido">Vestido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción Detallada</label>
+                    <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="2" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" id="marca" th:field="*{marca}" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="color" class="form-label">Color</label>
+                        <input type="text" id="color" th:field="*{color}" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="talla" class="form-label">Talla</label>
+                        <select id="talla" th:field="*{talla}" class="form-select" required>
+                            <option value="">Seleccione Talla</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="valorProdu" class="form-label">Valor de Producción ($)</label>
+                        <input type="number" id="valorProdu" th:field="*{valorProdu}" class="form-control" min="0.01" step="0.01" required />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="porcentajeGanancia" class="form-label">% Ganancia</label>
+                        <input type="number" id="porcentajeGanancia" th:field="*{porcentajeGanancia}" class="form-control" min="0" max="100" step="0.1" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="proveedorId" class="form-label">Proveedor</label>
+                    <select id="proveedorId" th:field="*{proveedorId}" class="form-select" required>
+                        <option value="">Seleccione Proveedor</option>
+
+                        <option th:each="prov : ${proveedores}"
+                                th:value="${prov.id}"
+                                th:text="${prov.nombre + ' ' + prov.apellido + ' (' + prov.telefono + ')'}"
+                                th:selected="${producto.proveedorId != null and prov.id.equals(producto.proveedorId)}">
+                            Proveedor A
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="stock" class="form-label">Stock Actual</label>
+                    <input type="number" id="stock" th:field="*{stock}" class="form-control" readonly style="background-color: #f0f0f0;" title="Actualice el stock desde la tabla principal del Inventario" />
+                </div>
+
+
+                <div class="form-actions" style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="background-color: #0a3d91; color: #fff; padding: 0.8rem 1.6rem; border-radius: 10px;">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                    <a th:href="@{/admin/inventario}" class="btn btn-secondary" style="background-color: #d4d7dd; color: #333; padding: 0.8rem 1.6rem; border-radius: 10px;">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Flair - Investigacion de Operaciones</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .admin-header { background-color:#0d47a1;color:white;display:flex;justify-content:space-between;align-items:center;padding:10px 30px;height:120px;box-shadow:0 4px 12px rgba(0,0,0,.15);position:fixed;top:0;left:0;width:100%;z-index:1000;box-sizing:border-box; }
+        .admin-header .logo-title { display:flex;align-items:center;gap:25px; }
+        .admin-header .logo img { height:125px;width:auto;object-fit:contain; }
+        .admin-header h1 { font-size:1.6rem;font-weight:700;margin:0; }
+        .admin-header .actions { display:flex;gap:15px;align-items:center; }
+        .btn-regresar,.btn-logout { background:linear-gradient(135deg,#0d47a1,#1565c0);color:#fff!important;padding:10px 18px;border-radius:12px;border:2px solid #1565c0;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .3s ease; }
+        .btn-regresar:hover { background:#ffd54f;color:#333!important;border-color:#ffd54f; }
+        .btn-logout:hover { background:#ef5350;border-color:#ef5350; }
+        body { font-family:'Segoe UI',sans-serif;margin:0;padding-top:145px;background:linear-gradient(135deg,#dfe9f3 0%,#fff 100%); }
+        .container { max-width:880px;margin:0 auto 40px;background:white;padding:40px;border-radius:20px;box-shadow:0 10px 35px rgba(0,0,0,.13); }
+        h2 { color:#0d47a1;border-bottom:3px solid #0d47a1;padding-bottom:10px;margin-bottom:10px;font-weight:700;text-align:center; }
+        .descripcion { text-align:center;color:#555;margin-bottom:30px;font-size:.97em;line-height:1.6; }
+        .formula-box { background:#e8eaf6;border-radius:12px;padding:14px 20px;margin-bottom:25px;border-left:5px solid #3949ab; }
+        .formula-box h4 { margin:0 0 6px;color:#1a237e; }
+        .formula-box code { font-size:1.05em;color:#283593; }
+        .form-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px; }
+        .var-card { background:#f0f4ff;border:2px solid #c5cae9;border-radius:14px;padding:20px; }
+        .var-card .var-title { font-size:1.05em;font-weight:700;color:#1a237e;margin-bottom:4px; }
+        .var-card .var-symbol { font-size:1.7em;font-weight:900;color:#3949ab;float:right;margin-top:-30px; }
+        .form-group label { display:block;font-weight:700;color:#0d47a1;margin-bottom:6px;margin-top:14px; }
+        .form-group .hint { font-size:.82em;color:#777;margin-bottom:8px; }
+        .form-group input[type="number"] { width:100%;padding:12px;border:2px solid #cfd8dc;border-radius:10px;box-sizing:border-box;font-size:1em;transition:border-color .3s; }
+        .form-group input[type="number"]:focus { outline:none;border-color:#0d47a1; }
+        .btn-calcular { background:linear-gradient(135deg,#0d47a1,#1565c0);color:white;padding:14px 30px;border:none;border-radius:12px;cursor:pointer;font-size:1.05em;font-weight:700;width:100%;margin-top:10px;transition:all .3s; }
+        .btn-calcular:hover { transform:scale(1.02);box-shadow:0 6px 20px rgba(13,71,161,.35); }
+        .btn-calcular:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+        #resultado { margin-top:30px;display:none; }
+        .resultado-cards { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:25px; }
+        .res-card { background:#f8f9fa;border-radius:12px;padding:16px;text-align:center;border-left:4px solid #ccc; }
+        .res-card.azul { border-left-color:#42a5f5; }
+        .res-card.verde { border-left-color:#66bb6a; }
+        .res-card.oro { border-left-color:#ffd600; }
+        .res-card .res-label { font-size:.82em;color:#666;margin-bottom:6px; }
+        .res-card .res-value { font-size:1.2em;font-weight:900;color:#1a237e; }
+        .res-card .res-sub { font-size:.78em;color:#888;margin-top:4px; }
+        .badge-mejora { display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:4px 14px;font-size:.88em;font-weight:700;margin-top:4px; }
+        #grafica-container { text-align:center;margin-top:10px; }
+        #grafica-container img { max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1); }
+        .spinner { border:4px solid #e0e0e0;border-top:4px solid #0d47a1;border-radius:50%;width:40px;height:40px;animation:spin .8s linear infinite;margin:20px auto; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+    </style>
+</head>
+<body>
+<header class="admin-header">
+    <div class="logo-title">
+        <div class="logo"><img th:src="@{/img/Logo_UrbanFlair.png}" src="/img/Logo_UrbanFlair.png" alt="Logo"></div>
+        <h1><i class="bi bi-gear-wide-connected"></i> Investigacion de Operaciones</h1>
+    </div>
+    <div class="actions">
+        <a href="/Admin" class="btn-regresar"><i class="bi bi-arrow-left-circle"></i> Regresar</a>
+        <a href="#" class="btn-logout" onclick="confirmLogout(event)"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
+    </div>
+</header>
+
+<div class="container">
+    <h2>⚙️ Optimización de Ventas</h2>
+    <p class="descripcion">
+        Ingresa cuántas <strong>camisetas (x₁)</strong> y <strong>pantalones (x₂)</strong> planeas vender,
+        junto con las restricciones del negocio. El sistema graficará la región factible y encontrará el punto óptimo
+        usando el <strong>Método Simplex</strong>.
+    </p>
+
+    <div class="formula-box">
+        <h4>📐 Función Objetivo (Maximizar ganancia mensual)</h4>
+        <code>Z = 25,000·x₁ + 40,000·x₂</code>
+        <p style="margin:8px 0 0;font-size:.88em;color:#555;">
+            Donde: &nbsp; 25,000 = ganancia por camiseta &nbsp;|&nbsp; 40,000 = ganancia por pantalón
+        </p>
+        <p style="margin:6px 0 0;font-size:.88em;color:#555;">
+            Sujeto a: &nbsp; x₁ + x₂ ≤ Capacidad total (C) &nbsp;|&nbsp; x₂ ≤ Máx. pantalones (M) &nbsp;|&nbsp; x₁, x₂ ≥ 0
+        </p>
+    </div>
+
+    <div class="form-grid">
+        <div class="var-card">
+            <span class="var-symbol">x₁</span>
+            <div class="var-title"><i class="bi bi-bag-fill"></i> Camisetas a vender</div>
+            <div class="form-group">
+                <label>Cantidad de camisetas (x₁):</label>
+                <div class="hint">Unidades que planeas vender este mes</div>
+                <input type="number" id="x1" value="200" min="0" step="1">
+            </div>
+            <div class="form-group">
+                <label>Capacidad total de ventas (C):</label>
+                <div class="hint">Restricción R1: x₁ + x₂ no puede superar este valor</div>
+                <input type="number" id="x1Max" value="500" min="1" step="1">
+            </div>
+        </div>
+
+        <div class="var-card">
+            <span class="var-symbol">x₂</span>
+            <div class="var-title"><i class="bi bi-scissors"></i> Pantalones a vender</div>
+            <div class="form-group">
+                <label>Cantidad de pantalones (x₂):</label>
+                <div class="hint">Unidades de pantalones que planeas vender</div>
+                <input type="number" id="x2" value="100" min="0" step="1">
+            </div>
+            <div class="form-group">
+                <label>Máximo de pantalones permitidos (M):</label>
+                <div class="hint">Restricción R2: x₂ no puede superar este valor</div>
+                <input type="number" id="x2Max" value="300" min="1" step="1">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-calcular" id="btnCalcular" onclick="calcularOptimizacion()">
+        <i class="bi bi-calculator"></i> Calcular Optimización
+    </button>
+
+    <div id="resultado">
+        <h3 style="color:#0d47a1;margin-top:30px;text-align:center;">📊 Resultados del Método Simplex</h3>
+        <div class="resultado-cards">
+            <div class="res-card azul">
+                <div class="res-label">Tu elección</div>
+                <div class="res-value" id="resGananciaUsuario">—</div>
+                <div class="res-sub" id="resEleccion">x₁=?, x₂=?</div>
+            </div>
+            <div class="res-card verde">
+                <div class="res-label">Punto Óptimo</div>
+                <div class="res-value" id="resGananciaOptima">—</div>
+                <div class="res-sub" id="resOptimo">x₁=?, x₂=?</div>
+            </div>
+            <div class="res-card oro">
+                <div class="res-label">Mejora Potencial</div>
+                <div class="res-value" id="resDiferencia">—</div>
+                <div class="res-sub"><span id="badgeMejora" class="badge-mejora">—</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="spinner" style="display:none;">
+        <div class="spinner"></div>
+        <p style="text-align:center;color:#555;">Generando gráfica con Python...</p>
+    </div>
+</div>
+
+<script>
+    const fmt = new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0});
+
+    async function calcularOptimizacion() {
+        const x1    = parseFloat(document.getElementById('x1').value);
+        const x2    = parseFloat(document.getElementById('x2').value);
+        const x1Max = parseFloat(document.getElementById('x1Max').value);
+        const x2Max = parseFloat(document.getElementById('x2Max').value);
+
+        if ([x1,x2,x1Max,x2Max].some(isNaN)) { Swal.fire('Datos incompletos','Completa todos los campos.','warning'); return; }
+        if (x1+x2 > x1Max) { Swal.fire('Fuera de región factible',`x₁ + x₂ (${x1+x2}) supera la capacidad total (${x1Max}).`,'warning'); return; }
+        if (x2 > x2Max)     { Swal.fire('Fuera de región factible',`x₂ (${x2}) supera el máximo de pantalones (${x2Max}).`,'warning'); return; }
+
+        document.getElementById('spinner').style.display = 'block';
+        document.getElementById('resultado').style.display = 'none';
+        document.getElementById('btnCalcular').disabled = true;
+
+        try {
+            const res  = await fetch(`/api/innovacion/optimizar?x1=${x1}&x2=${x2}&x1Max=${x1Max}&x2Max=${x2Max}`);
+            const data = await res.json();
+            if (!res.ok || data.error) throw new Error(data.error || 'Error servidor');
+
+            document.getElementById('resGananciaUsuario').textContent = fmt.format(data.ganancia_usuario);
+            document.getElementById('resEleccion').textContent        = `x₁=${x1}, x₂=${x2}`;
+            document.getElementById('resGananciaOptima').textContent  = fmt.format(data.ganancia_optima);
+            document.getElementById('resOptimo').textContent          = `x₁=${data.x1_optimo}, x₂=${data.x2_optimo}`;
+            document.getElementById('resDiferencia').textContent      = fmt.format(Math.abs(data.diferencia));
+
+            const badge = document.getElementById('badgeMejora');
+            const pct   = data.ganancia_usuario > 0 ? ((data.diferencia/data.ganancia_usuario)*100).toFixed(1) : '0';
+            badge.textContent = data.diferencia > 0 ? `+${pct}% con el óptimo` : '¡Elegiste el óptimo!';
+
+
+            document.getElementById('resultado').style.display = 'block';
+        } catch(err) {
+            Swal.fire('Error', err.message, 'error');
+        } finally {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('btnCalcular').disabled = false;
+        }
+    }
+
+    function confirmLogout(e) {
+        e.preventDefault();
+        Swal.fire({title:'¿Cerrar sesión?',text:'Tu sesión se cerrará.',icon:'warning',
+            showCancelButton:true,confirmButtonText:'Sí, salir',cancelButtonText:'Cancelar'
+        }).then(r => { if (r.isConfirmed) window.location.href='/logout'; });
+    }
+</script>
+</body>
+</html>

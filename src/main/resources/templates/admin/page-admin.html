@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador | Urban Flair</title>
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}">
+    <link rel="icon" th:href="@{/img/logo.ico}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+<header class="admin-header">
+    <div class="logo">
+        <a th:href="@{/}">
+            <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo Urban Flair">
+        </a>
+        <h1>Panel de Administración</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#" class="logout" onclick="confirmLogout(event)">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+
+                <script>
+                    function confirmLogout(event) {
+                        event.preventDefault();
+
+                        Swal.fire({
+                            title: '¿Cerrar sesión?',
+                            text: "Tu sesión actual se cerrará.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, salir',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/logout';
+                            }
+                        });
+                    }
+                </script></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="admin-main" style="background-image: url('/img/foto2.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh; width: 100%; margin: 0; padding: 2rem;">
+    <h2>
+        Bienvenido,
+        <span th:text="${#authentication.name}">usuario</span> 👋
+    </h2>
+    <p>Gestiona todo desde un solo lugar.</p>
+
+    <div class="admin-cards">
+        <div class="card">
+            <i class="bi bi-people-fill"></i>
+            <h3>Lista de Usuarios y Proveedores</h3>
+            <p>Consulta, edita o elimina usuarios o proveedores gistrados.</p>
+            <a th:href="@{/admin/listar-usuarios}" class="btn-card">Ver más</a>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-receipt-cutoff"></i>
+            <h3>Historial de Ventas</h3>
+            <p>Revisa todas las transacciones realizadas en el sistema.</p>
+            <a th:href="@{/admin/historial-ventas}" class="btn-card">Ver más</a>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-box2-fill"></i>
+            <h3>Inventario</h3>
+            <p>Controla y actualiza el stock de productos fácilmente.</p>
+            <a th:href="@{/admin/inventario}" class="btn-card">Ver más</a>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-graph-up"></i>
+            <h3>Predicciones</h3>
+            <p>Obtén proyecciones de ventas basadas en datos históricos.</p>
+            <a th:href="@{/admin/predicciones}" class="btn-card">Ver más</a>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-bar-chart-line"></i>
+            <h3>Dashboard Financiero</h3>
+            <p>Visualiza métricas clave del negocio en un solo lugar.</p>
+            <a th:href="@{/admin/reporte-ventas}" class="btn-card">Ver más</a>
+        </div>
+        <div class="card">
+            <i class="bi bi-gear-wide-connected"></i>
+            <h3>Investigacion de Operaciones</h3>
+            <p>Optimiza pedidos y promociones para maximizar ganancias.</p>
+            <a th:href="@{/admin/innovacion-operaciones}" class="btn-card">Ver más</a>
+        </div>
+    </div>
+
+</main>
+<!-- BOTÓN DEL CHAT MODERNO -->
+<button class="chat-toggle-btn" id="chatToggleBtn">
+    <i class="bi bi-chat-dots-fill"></i>
+</button>
+
+<!-- VENTANA DEL CHAT -->
+<div class="chat-window" id="chatWindow">
+    <div class="chat-header" id="chatHeader">
+        <div class="chat-header-left">
+            <i class="bi bi-robot"></i>
+            <div>
+                <h3>Asistente Urban Flair</h3>
+                <div class="chat-status">● En línea</div>
+            </div>
+        </div>
+        <button class="chat-close-btn" id="chatCloseBtn">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            ¡Hola! Soy el asistente virtual de Urban Flair 👋<br>
+            ¿En qué puedo ayudarte hoy?
+        </div>
+
+        <!-- Preguntas rápidas seleccionables -->
+        <div class="quick-questions" id="quickQuestions">
+            <p class="quick-title">💡 Preguntas frecuentes:</p>
+            <button class="quick-btn" onclick="sendQuick('¿Cuántas ventas se han realizado hoy?')">📅 Ventas de hoy</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuántas ventas se han realizado este mes?')">📆 Ventas del mes</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuál es el total vendido con IVA?')">💰 Total vendido</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuál fue la venta más alta?')">📈 Venta más alta</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuántas ventas realizó cada usuario?')">👤 Ventas por usuario</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuánto se vendió el mes pasado?')">🗓️ Mes pasado</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cuál es el promedio por venta?')">📊 Promedio por venta</button>
+        </div>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+        <span></span><span></span><span></span>
+    </div>
+
+    <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Escribe tu mensaje aquí..." autocomplete="off">
+        <button class="chat-send-btn" id="chatSendBtn">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    </div>
+</div>
+
+<style>
+    /* Preguntas rápidas */
+    .quick-questions {
+        padding: 6px 4px 2px 4px;
+    }
+    .quick-title {
+        font-size: 0.78rem;
+        color: #666;
+        margin: 0 0 6px 0;
+    }
+    .quick-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #f0f4ff;
+        border: 1px solid #c7d4f5;
+        border-radius: 10px;
+        padding: 7px 12px;
+        margin-bottom: 5px;
+        font-size: 0.82rem;
+        color: #1a3a8f;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+    }
+    .quick-btn:hover {
+        background: #dce6ff;
+        transform: translateX(3px);
+    }
+    .quick-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+</style>
+
+<script>
+    const chatToggleBtn   = document.getElementById('chatToggleBtn');
+    const chatWindow      = document.getElementById('chatWindow');
+    const chatCloseBtn    = document.getElementById('chatCloseBtn');
+    const chatHeader      = document.getElementById('chatHeader');
+    const chatMessages    = document.getElementById('chatMessages');
+    const chatInput       = document.getElementById('chatInput');
+    const chatSendBtn     = document.getElementById('chatSendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const quickQuestions  = document.getElementById('quickQuestions');
+
+    let isChatOpen = false;
+
+    function openChat() {
+        chatWindow.style.display = 'flex';
+        isChatOpen = true;
+        chatInput.focus();
+        setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 100);
+    }
+
+    function closeChat() {
+        chatWindow.style.display = 'none';
+        isChatOpen = false;
+    }
+
+    function toggleChat() {
+        isChatOpen ? closeChat() : openChat();
+    }
+
+    function addMessage(text, isUser) {
+        const div = document.createElement('div');
+        div.className = `message ${isUser ? 'user' : 'bot'}`;
+        div.innerHTML = text.replace(/\n/g, '<br>');
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return div;
+    }
+
+    function showTyping() {
+        typingIndicator.style.display = 'flex';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTyping() {
+        typingIndicator.style.display = 'none';
+    }
+
+    // Deshabilita todos los botones de preguntas rápidas mientras espera respuesta
+    function setQuickBtnsDisabled(disabled) {
+        document.querySelectorAll('.quick-btn').forEach(b => b.disabled = disabled);
+    }
+
+    async function enviar(pregunta) {
+        if (!pregunta) return;
+
+        // Ocultar preguntas rápidas después de la primera pregunta
+        quickQuestions.style.display = 'none';
+
+        addMessage(pregunta, true);
+        chatInput.value = '';
+        showTyping();
+        setQuickBtnsDisabled(true);
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pregunta })
+            });
+
+            let texto = response.ok
+                ? (await response.text() || 'Lo siento, no pude procesar tu solicitud. 😅')
+                : 'Error al conectar con el servidor. 🔌';
+
+            hideTyping();
+            addMessage(texto, false);
+
+            // Mostrar botón para volver a ver las preguntas rápidas
+            mostrarBotonSugerencias();
+
+        } catch (e) {
+            console.error(e);
+            hideTyping();
+            addMessage('❌ Error de conexión. Intenta nuevamente.', false);
+        } finally {
+            setQuickBtnsDisabled(false);
+        }
+    }
+
+    // Botón "Ver sugerencias" que aparece después de cada respuesta
+    function mostrarBotonSugerencias() {
+        const existing = document.getElementById('btnVerSugerencias');
+        if (existing) existing.remove();
+
+        const btn = document.createElement('button');
+        btn.id = 'btnVerSugerencias';
+        btn.className = 'quick-btn';
+        btn.style.cssText = 'margin-top:8px; background:#fff3e0; border-color:#ffa726; color:#e65100;';
+        btn.textContent = '💡 Ver preguntas sugeridas';
+        btn.onclick = () => {
+            quickQuestions.style.display = 'block';
+            btn.remove();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+        chatMessages.appendChild(btn);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Envío desde botón de pregunta rápida
+    function sendQuick(texto) {
+        enviar(texto);
+    }
+
+    // Envío desde input de texto
+    async function sendMessage() {
+        const pregunta = chatInput.value.trim();
+        if (!pregunta) return;
+        await enviar(pregunta);
+    }
+
+    chatToggleBtn.addEventListener('click', toggleChat);
+    chatCloseBtn.addEventListener('click', closeChat);
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    chatWindow.addEventListener('click', e => e.stopPropagation());
+</script>

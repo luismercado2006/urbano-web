@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Mis Ventas</title>
+    <link rel="stylesheet" th:href="@{/css/styleUsuario.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .ventas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .ventas-table th {
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 15px;
+        }
+        .ventas-table td {
+            padding: 12px 15px;
+            font-size: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .ventas-table tr:hover { background: #f3f4f6; }
+        .btn-detalles {
+            background: #000;
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .btn-detalles:hover { background: #333; }
+        .menu a.active {
+            background-color: #ffffff33;
+            color: #fff;
+            font-weight: bold;
+        }
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal {
+            background: #ffffff;
+            width: 550px;
+            max-width: 90vw;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            animation: fadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eeeeee;
+            margin-bottom: 15px;
+        }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: #1f2937; }
+        .modal-subtitle { font-size: 0.9rem; color: #6b7280; margin-top: 4px; }
+        .item-row {
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+        .item-row:last-of-type { border-bottom: none; }
+        .item-details { display: flex; flex-direction: column; text-align: left; }
+        .item-name-full {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #374151;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+        .item-quantity { font-size: 0.85rem; color: #6b7280; margin-top: 2px; }
+        .item-subtotal { font-weight: 700; font-size: 1rem; color: #1f2937; text-align: right; }
+        .modal-summary {
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #eeeeee;
+            display: flex;
+            flex-direction: column;
+        }
+        .summary-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 1rem; }
+        .summary-row.final { border-top: 2px solid #1f2937; margin-top: 10px; padding-top: 10px; }
+        .summary-label { font-weight: 600; color: #374151; }
+        .summary-total { font-weight: 800; font-size: 1.5rem; color: #4F46E5; }
+        .btn-cerrar {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #0a3d91;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-cerrar:hover { background: #0d46a6; }
+    </style>
+</head>
+
+<body>
+<div class="user-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo Urban Flair">
+        </div>
+        <nav class="menu">
+            <a th:href="@{/usuario}"><i class="bi bi-house"></i> Inicio</a>
+            <a th:href="@{/usuario/registrar-proveedor}"><i class="bi bi-truck"></i> Registrar Proveedor</a>
+            <a th:href="@{/usuario/registrar-producto}"><i class="bi bi-box"></i> Registrar Producto</a>
+            <a th:href="@{/usuario/registrar-venta}"><i class="bi bi-cash-stack"></i> Registrar Venta</a>
+            <a th:href="@{/usuario/mis-ventas}" class="active"><i class="bi bi-receipt"></i> Mis Ventas</a>
+            <a th:href="@{/usuario/inventario}"><i class="bi bi-archive"></i> Inventario</a>
+            <a th:href="@{/usuario/perfil}"><i class="bi bi-person-circle"></i> Perfil</a>
+        </nav>
+        <a href="#" class="logout" onclick="confirmLogout(event)">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+        <script>
+            function confirmLogout(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: '¿Cerrar sesión?',
+                    text: "Tu sesión actual se cerrará.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, salir',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) { window.location.href = '/logout'; }
+                });
+            }
+        </script>
+    </aside>
+
+    <main class="main-content">
+        <header class="user-header">
+            <h1>Mis Ventas</h1>
+            <p class="description">Consulta todas las ventas que has registrado.</p>
+        </header>
+
+        <table class="ventas-table">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Detalles</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="venta : ${ventas}">
+                <td th:text="${venta.codigoVenta}">PJFD-123</td>
+                <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                <td th:text="${#numbers.formatDecimal(venta.totalFinal, 0, 'POINT', 2, 'COMMA')}">0.00</td>
+                <td>
+                    <a href="#" class="btn-detalles"
+                       th:attr="data-id=${venta.id}"
+                       onclick="mostrarModal(this.dataset.id)">
+                        Ver detalles
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:each="venta : ${ventas}" class="modal-bg" th:id="${'modal-' + venta.id}">
+            <div class="modal">
+                <div class="modal-header">
+                    <div>
+                        <h2 class="modal-title">Detalle de Venta</h2>
+                        <p class="modal-subtitle">
+                            Código: <span th:text="${venta.codigoVenta}"></span> |
+                            Fecha: <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div th:each="detalle : ${venta.detallesVenta}" class="item-row">
+                        <div class="item-details">
+                            <span class="item-name-full">
+                                <th:block th:if="${detalle.nombreProducto != null}">
+    <span th:text="${detalle.categoria}">Categoría</span> -
+    <span th:text="${detalle.nombreProducto}">Descripción</span> -
+    <span th:text="${detalle.marca}">Marca</span> -
+    <span th:text="${detalle.color}">Color</span> -
+    Talla: <span th:text="${detalle.talla}">Talla</span>
+</th:block>
+<th:block th:unless="${detalle.nombreProducto != null}">
+    <span style="color: #6b7280;">Producto no disponible</span>
+</th:block>
+                            </span>
+                            <span class="item-quantity">
+                                Cantidad: <strong th:text="${detalle.cantidad}">1</strong>
+                                (<span th:text="${#numbers.formatDecimal(detalle.precioUnitario, 0, 'POINT', 2, 'COMMA')}">0.00</span> c/u)
+                            </span>
+                        </div>
+                        <span class="item-subtotal"
+                              th:text="${#numbers.formatDecimal(detalle.subtotal, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                    </div>
+
+                    <div class="modal-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">SUBTOTAL ARTÍCULOS</span>
+                            <span th:text="${#numbers.formatDecimal(venta.subtotalArticulos, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">IVA (19%)</span>
+                            <span th:text="${#numbers.formatDecimal(venta.iva, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                        <div class="summary-row final">
+                            <span class="summary-label">TOTAL FINAL</span>
+                            <span class="summary-total"
+                                  th:text="${#numbers.formatDecimal(venta.totalFinal, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-cerrar"
+                            th:attr="onclick='cerrarModal(\'' + ${venta.id} + '\')'">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    function mostrarModal(id) {
+        document.getElementById('modal-' + id).style.display = 'flex';
+    }
+    function cerrarModal(id) {
+        document.getElementById('modal-' + id).style.display = 'none';
+    }
+</script>
+</body>
+</html>

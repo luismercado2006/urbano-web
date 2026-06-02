@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Urban Flair Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .main-container {
+            padding: 2rem;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content {
+            padding: 140px 30px 40px 30px; /* espacio por header fijo */
+            max-width: 1400px;
+            margin: auto;
+        }
+
+         /* Contenedor principal */
+        .user-container {
+            display: block;
+            width: 100%;
+        }
+
+        /* ================= HEADER ================= */
+        .admin-header {
+            background-color: #0d47a1;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            height: 120px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .admin-header .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .admin-header .logo img {
+            height: 120px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .admin-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .admin-header .actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .admin-header .actions a {
+            white-space: nowrap;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-regresar {
+            background: linear-gradient(135deg, #0d47a1, #1565c0); /* azul elegante */
+            color: #fff !important;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px solid #1565c0;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .btn-regresar:hover {
+            background: #ffd54f; /* amarillo */
+            color: #333 !important;
+            border-color: #ffd54f;
+        }
+
+         /* BOTÓN CERRAR SESIÓN */
+        .btn-logout {
+            background: linear-gradient(135deg, #0d47a1, #1565c0); /* azul elegante */
+            color: #fff !important;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px solid #1565c0;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ef5350; /* rojo */
+            color: #fff !important;
+            border-color: #ef5350;
+        }
+
+        /* ================= Diseño de confirmacion de cerrar sesion ================= */
+        .swal2-popup {
+            border-radius: 20px !important;
+            padding: 25px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.20) !important;
+        }
+
+        .swal2-title {
+            font-size: 1.6rem !important;
+            font-weight: 700 !important;
+            color: #0d47a1 !important;
+        }
+
+        .swal2-html-container {
+            font-size: 1.1rem !important;
+            color: #333 !important;
+        }
+
+        /* Botón CONFIRMAR (Sí, salir) */
+        .swal2-confirm {
+            background: linear-gradient(135deg, #0d47a1, #1565c0) !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #1565c0 !important;
+            box-shadow: 0 0 0 2px rgba(21,101,192,0.3) !important;
+        }
+
+        /* Hover CONFIRMAR */
+        .swal2-confirm:hover {
+            background: #ffd54f !important;
+            color: #333 !important;
+            border-color: #ffd54f !important;
+            box-shadow: 0 0 0 2px rgba(255,213,79,0.3) !important;
+        }
+
+        /* Botón CANCELAR */
+        .swal2-cancel {
+            background: #ef5350 !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #ef5350 !important;
+            box-shadow: 0 0 0 2px rgba(239,83,80,0.3) !important;
+        }
+
+        /* Hover CANCELAR */
+        .swal2-cancel:hover {
+            background: #e53935 !important;
+            box-shadow: 0 0 0 2px rgba(229,57,53,0.3) !important;
+        }
+
+        .form-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1976D2;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #E0E0E0;
+            padding-bottom: 10px;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        /* Controles Superiores (Buscador y Posible Paginador/Filtros) */
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 20px;
+        }
+
+        /* Buscador */
+        .search-box {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px 10px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            flex-grow: 1;
+            font-size: 1rem;
+            background-color: transparent;
+        }
+
+        .search-box i {
+            color: #777;
+        }
+
+        /* ======== TABLA Y ADAPTABILIDAD ======== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* CLAVE DE ADAPTABILIDAD: Sin min-width fijo, las columnas se ajustarán */
+            table-layout: auto;
+        }
+
+        thead {
+            background-color: #1976D2;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 0.9rem;
+            white-space: normal; /* Permite que el texto largo se ajuste */
+        }
+
+        /* Ajuste de ancho para columnas cortas (Stock, Talla, % Ganancia) */
+        th:nth-child(5), th:nth-child(6), th:nth-child(8) {
+             width: 80px;
+             text-align: center;
+        }
+        td:nth-child(5), td:nth-child(6), td:nth-child(8) {
+             text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        tbody tr:hover {
+            background-color: #E3F2FD;
+            transition: 0.3s ease;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 1.5rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* Botones de acción (COLUMNA DE GESTIÓN) */
+        td:last-child {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            /* Asegura que la celda tenga el ancho mínimo necesario para los controles */
+            min-width: 200px;
+            white-space: nowrap;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #1976D2;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+        .btn-action:hover { color: #0D47A1; }
+
+        /* Stock Input */
+        .stock-form {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            background-color: #E8F5E9;
+            padding: 4px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .stock-form input[type="number"] {
+            max-width: 45px; /* Más estrecho aún */
+            padding: 3px;
+            border-radius: 4px;
+            border: 1px solid #A5D6A7;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .stock-form button {
+            padding: 4px 6px;
+            font-size: 0.8rem;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .stock-form button:hover {
+            background-color: #388E3C;
+        }
+
+        /* Paginador */
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .pagination-controls button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: #333;
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #E3F2FD;
+            border-color: #1976D2;
+        }
+        .pagination-controls button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .page-info {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="user-container">
+
+    <header class="admin-header">
+        <div class="logo-title">
+            <div class="logo">
+                <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo">
+            </div>
+            <h1><i class="bi bi-archive"></i> Inventario y Gestión de Productos</h1>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/Admin}" class="btn-regresar">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
+
+            <a href="#" class="btn-logout" onclick="confirmLogout(event)">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="form-container">
+            <div class="form-header">
+                <h2><i class="bi bi-archive"></i> Inventario y Gestión de Productos</h2>
+            </div>
+
+            <!-- BUSCADOR Y CONTROLES -->
+            <div class="top-controls">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por código, descripción, o marca..." onkeyup="filterTable()" />
+                </div>
+
+                <!-- El botón/enlace para registrar producto ha sido eliminado de aquí -->
+            </div>
+
+            <div th:if="${mensaje}">
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    const mensaje = /*[[${mensaje}]]*/ 'Mensaje';
+                    const tipoAlerta = /*[[${alerta}]]*/ 'success';
+
+                    const iconName = (tipoAlerta === 'success') ? 'success' : 'error';
+                    const titleText = (tipoAlerta === 'success') ? '¡Éxito!' : 'Error';
+
+                    Swal.fire({
+                        icon: iconName,
+                        title: titleText,
+                        text: mensaje,
+                        timer: 4000
+                    });
+                    /*]]>*/
+                </script>
+            </div>
+            <div class="table-container">
+                <table id="inventory-table">
+                    <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Marca</th>
+                        <th>Talla</th>
+                        <th>Stock Actual</th>
+                        <th>Costo Producción</th>
+                        <th>% Ganancia</th>
+                        <th>Proveedor</th>
+                        <th>Gestión</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="productoVista : ${productos}">
+                        <td th:text="${productoVista.producto.codigoP}">001</td>
+                        <td th:text="${productoVista.producto.categoria}">Categoría</td>
+                        <td th:text="${productoVista.producto.descripcion}">Descripción</td>
+                        <td th:text="${productoVista.producto.marca}">Marca</td>
+                        <td th:text="${productoVista.producto.talla}">Talla</td>
+                        <td th:text="${productoVista.producto.stock}">0</td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(productoVista.producto.valorProdu, 1, 2)}">$0.00</td>
+                        <td th:text="${#numbers.formatDecimal(productoVista.producto.porcentajeGanancia, 1, 0) + '%'}">0%</td>
+                        <td th:text="${productoVista.nombreProveedor}">Proveedor</td>
+
+                        <td>
+                            <form th:action="@{/admin/inventario/actualizar-stock}" method="post" class="stock-form">
+                                <input type="hidden" name="idProducto" th:value="${productoVista.producto.id}" />
+                                <input type="number" name="cantidadAdicional" min="1" value="1" required placeholder="Cant." title="Cantidad a sumar al stock" />
+                                <button type="submit" title="Añadir Stock">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </form>
+
+                            <a th:href="@{/admin/inventario/editar/{id}(id=${productoVista.producto.id})}" class="btn-action" title="Editar detalles del Producto">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${productos == null or productos.empty}">
+                        <td colspan="10" class="no-data">No hay productos registrados</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINADOR (Estructura visual, requiere lógica JS/Thymeleaf para funcionar realmente) -->
+            <div class="top-controls" style="justify-content: flex-end; margin-top: 1.5rem;">
+                <!-- Se ajusta la alineación ya que solo queda la paginación a la derecha -->
+                <div class="pagination-controls" style="margin-left: auto;">
+                    <button id="prev-btn" onclick="prevPage()" disabled><i class="bi bi-chevron-left"></i> Anterior</button>
+                    <span class="page-info">Página <span id="current-page">1</span> de <span id="total-pages">1</span></span>
+                    <button id="next-btn" onclick="nextPage()" disabled>Siguiente <i class="bi bi-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- LÓGICA DEL BUSCADOR Y PAGINADOR BÁSICO (FRONT-END) -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicializa el paginador al cargar la página
+        initializePaginator();
+    });
+
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    let allRows;
+    let filteredRows;
+
+    function initializePaginator() {
+        const table = document.getElementById('inventory-table');
+        // Se excluye la fila 'no-data' que pueda venir de Thymeleaf si la lista de productos está vacía inicialmente.
+        allRows = Array.from(table.tBodies[0].querySelectorAll('tr')).filter(row => !row.classList.contains('no-data'));
+
+        // Inicialmente, filtramos por la cadena de búsqueda actual (vacía)
+        filterTable();
+    }
+
+    function filterTable() {
+        const input = document.getElementById('search-input');
+        const filter = input.value.toUpperCase();
+
+        filteredRows = allRows.filter(row => {
+            // Obtiene el texto de las primeras 4 columnas (Código, Categoría, Descripción, Marca)
+            const colsToSearch = [0, 1, 2, 3];
+            let rowText = '';
+            colsToSearch.forEach(colIndex => {
+                const cell = row.cells[colIndex];
+                if (cell) {
+                    rowText += cell.textContent.toUpperCase() + ' ';
+                }
+            });
+            return rowText.includes(filter);
+        });
+
+        // Reinicia la página a 1 después de filtrar
+        currentPage = 1;
+        renderPage();
+    }
+
+    function renderPage() {
+        const tableBody = document.getElementById('inventory-table').tBodies[0];
+        const noDataRowTemplate = '<td colspan="10" class="no-data">No hay productos que coincidan con la búsqueda.</td>';
+
+        // [FIX]: Limpia COMPLETAMENTE el cuerpo de la tabla (innerHTML = '') antes de renderizar la página.
+        // Esto garantiza que cualquier fila 'no-data' insertada en una búsqueda anterior (o filas de datos)
+        // se elimine antes de mostrar los nuevos resultados.
+        tableBody.innerHTML = '';
+
+        const totalItems = filteredRows.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+        document.getElementById('total-pages').textContent = totalPages > 0 ? totalPages : 1;
+        document.getElementById('current-page').textContent = totalPages > 0 ? currentPage : 0;
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const rowsToShow = filteredRows.slice(start, end);
+
+        if (totalItems === 0) {
+            const newNoDataRow = document.createElement('tr');
+            newNoDataRow.innerHTML = noDataRowTemplate;
+            newNoDataRow.classList.add('no-data');
+            tableBody.appendChild(newNoDataRow);
+        } else {
+            // Renderizar solo las filas de la página actual
+            rowsToShow.forEach(row => {
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Actualizar botones de paginación
+        document.getElementById('prev-btn').disabled = currentPage <= 1;
+        document.getElementById('next-btn').disabled = currentPage >= totalPages;
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage();
+        }
+    }
+
+        // Función de cerrar sesión
+    function confirmLogout(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Tu sesión se cerrará.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, salir',
+            cancelButtonText: 'Cancelar'
+        }).then(r => {
+            if (r.isConfirmed) window.location.href = '/logout';
+        });
+    }
+</script>
+<script>
+    document.getElementById("chatBtn").onclick = () => {
+        const box = document.getElementById("chatBox");
+        box.style.display = box.style.display === "none" ? "block" : "none";
+    };
+
+    function enviarPregunta() {
+        const pregunta = document.getElementById("pregunta").value;
+
+        fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pregunta })
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("respuesta").innerText = data;
+        })
+        .catch(err => {
+            document.getElementById("respuesta").innerText = "Error al conectar";
+        });
+    }
+</script>
+
+
+</body>
+</html>

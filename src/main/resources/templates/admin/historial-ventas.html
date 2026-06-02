@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Historial de Ventas</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styleUsuario.css}">
+
+    <style>
+        /* ===================== Contenedor principal ===================== */
+        .user-container {
+            display: block;
+            width: 100%;
+        }
+
+        /* ===================== HEADER ===================== */
+        .admin-header {
+            background-color: #0d47a1;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            height: 100px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .admin-header .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .admin-header .logo img {
+            height: 120px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .admin-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 600;
+            color: white;
+        }
+
+        .admin-header .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .admin-header .actions a {
+            white-space: nowrap;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+        }
+
+        .btn-regresar {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: #fff !important;
+            border: 2px solid #1565c0;
+        }
+
+        .btn-regresar:hover {
+            background: #ffd54f;
+            color: #333 !important;
+            border-color: #ffd54f;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: #fff !important;
+            border: 2px solid #1565c0;
+        }
+
+        .btn-logout:hover {
+            background: #ef5350;
+            color: #fff !important;
+            border-color: #ef5350;
+        }
+
+        /* ===================== SweetAlert2 ===================== */
+        .swal2-popup {
+            border-radius: 20px !important;
+            padding: 25px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+
+        .swal2-title {
+            font-size: 1.6rem !important;
+            font-weight: 700 !important;
+            color: #0d47a1 !important;
+        }
+
+        .swal2-html-container {
+            font-size: 1.1rem !important;
+            color: #333 !important;
+        }
+
+        .swal2-confirm {
+            background: linear-gradient(135deg, #0d47a1, #1565c0) !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #1565c0 !important;
+        }
+
+        .swal2-confirm:hover {
+            background: #ffd54f !important;
+            color: #333 !important;
+            border-color: #ffd54f !important;
+        }
+
+        .swal2-cancel {
+            background: #ef5350 !important;
+            border-radius: 12px !important;
+            padding: 10px 22px !important;
+            font-weight: 600 !important;
+            border: 2px solid #ef5350 !important;
+        }
+
+        .swal2-cancel:hover {
+            background: #e53935 !important;
+        }
+
+        /* ===================== Main content ===================== */
+        .main-content {
+            padding: 140px 40px 40px 40px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .user-header h1 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        .user-header p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* ===================== Filtro búsqueda ===================== */
+        #search-input,
+        #date-input {
+            padding: 8px;
+            width: 200px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* ===================== Tabla ventas ===================== */
+        .ventas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .ventas-table th {
+            background: #f8f9fa;
+            color: #0d47a1;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .ventas-table td {
+            padding: 12px 15px;
+            font-size: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ventas-table tr:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-detalles {
+            background: #0d47a1;
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-detalles:hover {
+            background: #0a3d91;
+        }
+
+        /* ===================== Modal ===================== */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: #fff;
+            width: 550px;
+            max-width: 90vw;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+
+        .modal-header {
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .item-row:last-of-type { border-bottom: none; }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name-full {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .item-quantity {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .item-subtotal {
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        .modal-summary {
+            border-top: 2px solid #eee;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .summary-row.final {
+            border-top: 2px solid #1f2937;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .btn-cerrar {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #0a3d91;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .btn-cerrar:hover {
+            background: #0d46a6;
+        }
+
+        /* ===================== Paginación ===================== */
+        .pagination-controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pagination-controls button {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+<div class="user-container">
+
+    <header class="admin-header">
+        <div class="logo-title">
+            <div class="logo">
+                <img th:src="@{/img/Logo_UrbanFlair.png}" alt="Logo">
+            </div>
+            <h1><i class="bi bi-receipt"></i> Historial de Ventas</h1>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/Admin}" class="btn-regresar">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
+            <a href="#" class="btn-logout" onclick="confirmLogout(event)">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <header class="user-header">
+            <h1>Detalle de Transacciones</h1>
+            <p>Consulta todas las ventas registradas por el personal.</p>
+        </header>
+
+        <!-- FILTRO -->
+        <input type="text" id="search-input" placeholder="Buscar por código o Fecha..." onkeyup="filterTable()">
+        <input type="date" id="date-input" oninput="filterTable()">
+
+        <!-- TABLA -->
+        <table class="ventas-table" id="sales-table">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Registrado por</th>
+                <th>Total</th>
+                <th>Detalles</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="venta : ${ventas}">
+                <td th:text="${venta.codigoVenta}">PJFD-123</td>
+                <td th:text="${venta.fechaVenta != null ? #temporals.format(venta.fechaVenta, 'dd/MM/yyyy') : 'Sin fecha'}">01/01/2025</td>
+                <td th:text="${venta.registradoPor}">usuario@sistema.com</td>
+                <td th:text="${#numbers.formatDecimal(venta.totalFinal, 0, 'POINT', 2, 'COMMA')}">13,201,421.00</td>
+                <td>
+                    <a href="#" class="btn-detalles" th:attr="data-id=${venta.id}" onclick="mostrarModal(this.dataset.id)">Ver detalles</a>
+                </td>
+            </tr>
+            <tr class="no-data" style="display:none;">
+                <td colspan="5" style="text-align:center; font-style:italic; color:#777;">No hay ventas que coincidan</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- PAGINACIÓN -->
+        <div class="pagination-controls">
+            <button id="prev-btn" onclick="prevPage()" disabled>Anterior</button>
+            <span>Página <span id="current-page">1</span> de <span id="total-pages">1</span></span>
+            <button id="next-btn" onclick="nextPage()" disabled>Siguiente</button>
+        </div>
+        <div th:each="venta : ${ventas}" class="modal-bg" th:id="${'modal-' + venta.id}">
+            <div class="modal">
+                <div class="modal-header">
+                    <div>
+                        <h2 class="modal-title">Detalle de Venta</h2>
+                        <p class="modal-subtitle">
+                            Código: <span th:text="${venta.codigoVenta}"></span> |
+                            Fecha: <span th:text="${venta.fechaVenta != null ? #temporals.format(venta.fechaVenta, 'dd/MM/yyyy') : 'Sin fecha'}"></span>
+                        </p>
+                        <p class="modal-subtitle">
+                            Registrado por: <span th:text="${venta.registradoPor}"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div th:each="detalle : ${venta.detallesVenta}" class="item-row">
+                        <div class="item-details">
+                    <span class="item-name-full">
+                        <th:block th:if="${detalle.nombreProducto != null}">
+                            <span th:text="${detalle.categoria}">Categoría</span> -
+                            <span th:text="${detalle.nombreProducto}">Descripción</span> -
+                            <span th:text="${detalle.marca}">Marca</span> -
+                            <span th:text="${detalle.color}">Color</span> -
+                            Talla: <span th:text="${detalle.talla}">Talla</span>
+                        </th:block>
+                        <th:block th:unless="${detalle.nombreProducto != null}">
+                            <span style="color: #6b7280;">Producto no disponible</span>
+                        </th:block>
+                    </span>
+                            <span class="item-quantity">
+                        Cantidad: <strong th:text="${detalle.cantidad}">1</strong>
+                        (<span th:text="${#numbers.formatDecimal(detalle.precioUnitario ?: 0, 0, 'POINT', 2, 'COMMA')}">0.00</span>)
+                    </span>
+                        </div>
+                        <span class="item-subtotal"
+                              th:text="${#numbers.formatDecimal(detalle.subtotal ?: 0, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                    </div>
+
+                    <div class="modal-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">SUBTOTAL ARTÍCULOS</span>
+                            <span th:text="${#numbers.formatDecimal(venta.subtotalArticulos, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">IVA (19%)</span>
+                            <span th:text="${#numbers.formatDecimal(venta.iva, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                        <div class="summary-row final">
+                            <span class="summary-label">TOTAL FINAL</span>
+                            <span class="summary-total"
+                                  th:text="${#numbers.formatDecimal(venta.totalFinal, 0, 'POINT', 2, 'COMMA')}">0.00</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-cerrar"
+                            th:attr="onclick='cerrarModal(\'' + ${venta.id} + '\')'">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+<script>
+    // ============ Modales y logout ============
+    function mostrarModal(id) { document.getElementById('modal-' + id).style.display = 'flex'; }
+    function cerrarModal(id) { document.getElementById('modal-' + id).style.display = 'none'; }
+    function confirmLogout(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: 'Tu sesión se cerrará.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, salir',
+            cancelButtonText: 'Cancelar'
+        }).then(r => { if (r.isConfirmed) window.location.href = '/logout'; });
+    }
+
+    // ============ Paginación y filtros ============
+    const rowsPerPage = 5;
+    let currentPage = 1;
+    let allRows = [];
+    let filteredRows = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('sales-table');
+        allRows = Array.from(table.tBodies[0].querySelectorAll('tr')).filter(row => !row.classList.contains('no-data'));
+        filteredRows = allRows;
+        updateTable();
+    });
+
+    function updateTable() {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+        document.getElementById('current-page').textContent = currentPage;
+        document.getElementById('total-pages').textContent = totalPages;
+
+        allRows.forEach(row => row.style.display = 'none');
+        filteredRows.forEach((row, index) => {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            if (index >= start && index < end) row.style.display = '';
+        });
+
+        document.getElementById('prev-btn').disabled = currentPage <= 1;
+        document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+        document.querySelector('.no-data').style.display = filteredRows.length === 0 ? '' : 'none';
+    }
+
+    function prevPage() { if(currentPage>1){ currentPage--; updateTable(); } }
+    function nextPage() { const totalPages = Math.ceil(filteredRows.length / rowsPerPage); if(currentPage<totalPages){ currentPage++; updateTable(); } }
+
+    function filterTable() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const dateTerm = document.getElementById('date-input').value;
+        filteredRows = allRows.filter(row => {
+            const code = row.cells[0].textContent.toLowerCase();
+            const user = row.cells[2].textContent.toLowerCase();
+            const date = row.cells[1].textContent.split('/').reverse().join('-');
+            return (code.includes(searchTerm) || user.includes(searchTerm)) && (!dateTerm || date === dateTerm);
+        });
+        currentPage = 1;
+        updateTable();
+    }
+</script>
+
+</body>
+</html>
